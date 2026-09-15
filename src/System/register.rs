@@ -16,7 +16,8 @@ enum Registers {
     M5,
     M6,
     M7,
-    M8
+    M8,
+    REGLEN
 }
 
 #[derive(Debug, Clone, Copy, Default)]

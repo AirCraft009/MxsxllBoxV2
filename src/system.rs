@@ -1,5 +1,7 @@
 use crate::system::cpu::CPU;
 
 pub mod cpu;
-pub mod specifications;
-mod Register;
+mod register;
+mod encoding;
+pub mod memory;
+mod Instructions;
