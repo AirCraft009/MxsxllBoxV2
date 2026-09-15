@@ -1,2 +1,5 @@
+use crate::system::cpu::CPU;
+
 pub mod cpu;
-mod specifications;
+pub mod specifications;
+mod Register;
