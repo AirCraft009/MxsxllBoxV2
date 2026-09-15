@@ -131,6 +131,11 @@ impl Memory {
     pub fn read_long(&self, addr: u64) -> u64 {
         self.read_dword(addr) as u64 | (self.read_dword(addr + 4) as u64) << 32
     }
+
+    #[inline(always)]
+    pub fn read_bytes(&self, addr: u64, len: usize) -> &[u8] {
+        &self.data[addr as usize..addr as usize + len]
+    }
 }
 
 /// Builder for `Memory`. Every region defaults to size 0 (unmapped).
