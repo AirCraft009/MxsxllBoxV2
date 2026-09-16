@@ -1,5 +1,9 @@
+use crate::system::register::Registers;
+
 #[repr(u8)]
 pub enum Opcode {
+    NONE,
+    NOOP,
     ADD,
     SUB,
     MUL,
@@ -49,4 +53,24 @@ pub enum ITypes{
     OpImm,
     OpRegReg,
     OpRegImm,
+}
+
+pub struct Instruction {
+    i_type: ITypes,
+    opcode: u8,
+    rx: u8,
+    ry: u8,
+    immi: u64,
+}
+
+impl Instruction {
+    pub fn new(opcode: u8, rx: u8, ry: u8, immi: u64, i_type: ITypes) -> Self {
+        Instruction{
+            i_type,
+            opcode,
+            rx,
+            ry,
+            immi
+        }
+    }
 }

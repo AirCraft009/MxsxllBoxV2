@@ -1,26 +1,44 @@
+use std::arch::x86_64::_addcarryx_u64;
+use std::io::Read;
 use crate::system::cpu::CPU;
-use crate::system::instructions::{ITypes, Opcode};
+use crate::system::instructions::{ITypes, Instruction, Opcode};
 use crate::system::instructions::ITypes::{Op, OpImm, OpReg, OpRegImm, OpRegReg, ILLEGAL};
-use crate::system::instructions::Opcode::HALT;
+use crate::system::instructions::Opcode::{HALT, NONE};
+use crate::system::register::Registers::NOREG;
 
-pub fn decode_instruction(cpu: &CPU, addr: u64){
+pub fn decode_instruction(cpu: &CPU, addr: u64) -> Instruction {
     // 1b op
     // 8bit(1byte) reg 1
     // 8bytes immediate
     // = 10 bytes
     let op = cpu.memory.read_byte(addr);
     let i_type = get_instruction_type(op);
+
     match i_type {
-        ILLEGAL => {0}
-        Op => {1}
-        OpReg => {2}
-        OpImm => {9}
-        OpRegReg => {3}
-        OpRegImm => {10}
+        ILLEGAL => {
+            Instruction::new(NONE as u8, NOREG as u8, NOREG as u8, 0, i_type )
+        }
+        Op => {
+            Instruction::new(op, NOREG as u8, NOREG as u8, 0, i_type)
+        }
+        OpReg => {
+            let data = cpu.memory.read_byte(addr + 1);
+            Instruction::new(op, data, NOREG as u8, 0, i_type)
+        }
+        OpImm => {
+            let data = cpu.memory.read_long(addr + 1);
+            Instruction::new(op, NOREG as u8, NOREG as u8, data, i_type)
+        }
+        OpRegReg => {
+            let data = cpu.memory.read_bytes(addr + 1, 3);
+            Instruction::new(op, data[0], data[1], 0, i_type)
+        }
+        OpRegImm => {
+            let data = cpu.memory.read_bytes(addr + 1, 10);
+            let imm = u64::from_le_bytes(data[2..10].try_into().unwrap());
+            Instruction::new(op, data[0], data[1], imm, i_type)
+        }
     }
-    let instruction = cpu.memory.read_bytes(addr + 1,(len-1) as usize);
-
-
 }
 
 pub fn instruction_length_jtable(op: u8) -> u64{
