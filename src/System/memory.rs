@@ -112,27 +112,22 @@ impl Memory {
             .build()
     }
 
-    #[inline(always)]
     pub fn read_byte(&self, addr: u64) -> u8 {
         self.data[addr as usize]
     }
 
-    #[inline(always)]
     pub fn read_word(&self, addr: u64) -> u16 {
         self.data[addr as usize] as u16 | (self.data[addr as usize + 1] as u16) << 8
     }
 
-    #[inline(always)]
     pub fn read_dword(&self, addr: u64) -> u32 {
         self.read_word(addr) as u32 | (self.read_word(addr + 2) as u32) << 16
     }
 
-    #[inline(always)]
     pub fn read_long(&self, addr: u64) -> u64 {
         self.read_dword(addr) as u64 | (self.read_dword(addr + 4) as u64) << 32
     }
 
-    #[inline(always)]
     pub fn read_bytes(&self, addr: u64, len: usize) -> &[u8] {
         &self.data[addr as usize..addr as usize + len]
     }

@@ -1,5 +1,7 @@
+pub const REGISTERS: usize = 24;
+
 #[repr(usize)]
-enum Registers {
+pub enum Registers {
     PC,
     MSP,
     MBP,
@@ -17,7 +19,14 @@ enum Registers {
     M6,
     M7,
     M8,
-    REGLEN
+    CR1,
+    CR2,
+    CR3,
+    CR4,
+    CR5,
+    CR6,
+    CR7,
+    CR8,
 }
 
 #[derive(Debug, Clone, Copy, Default)]

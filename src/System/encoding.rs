@@ -1,16 +1,26 @@
 use crate::system::cpu::CPU;
-use crate::system::Instructions::{ITypes, Opcode};
-use crate::system::Instructions::ITypes::{Op, OpImm, OpReg, OpRegImm, OpRegReg, ILLEGAL};
-use crate::system::Instructions::Opcode::HALT;
+use crate::system::instructions::{ITypes, Opcode};
+use crate::system::instructions::ITypes::{Op, OpImm, OpReg, OpRegImm, OpRegReg, ILLEGAL};
+use crate::system::instructions::Opcode::HALT;
 
 pub fn decode_instruction(cpu: &CPU, addr: u64){
     // 1b op
-    // 5bit(1byte) reg 1
+    // 8bit(1byte) reg 1
     // 8bytes immediate
     // = 10 bytes
     let op = cpu.memory.read_byte(addr);
-    let len = instruction_length_jtable(op);
-    let instruction = cpu.memory.read_bytes(addr,(len-1) as usize);
+    let i_type = get_instruction_type(op);
+    match i_type {
+        ILLEGAL => {0}
+        Op => {1}
+        OpReg => {2}
+        OpImm => {9}
+        OpRegReg => {3}
+        OpRegImm => {10}
+    }
+    let instruction = cpu.memory.read_bytes(addr + 1,(len-1) as usize);
+
+
 }
 
 pub fn instruction_length_jtable(op: u8) -> u64{
@@ -23,6 +33,18 @@ pub fn instruction_length_jtable(op: u8) -> u64{
         OpRegImm => {10}
     }
 }
+
+pub fn get_type_length_jtable(op_type: ITypes) -> u64{
+    match op_type {
+        ILLEGAL => {0}
+        Op => {1}
+        OpReg => {2}
+        OpImm => {9}
+        OpRegReg => {3}
+        OpRegImm => {10}
+    }
+}
+
 pub fn get_instruction_type(op: u8) -> ITypes{
     match op {
         x if x == Opcode::ADD as u8

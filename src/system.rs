@@ -4,4 +4,4 @@ pub mod cpu;
 mod register;
 mod encoding;
 pub mod memory;
-mod Instructions;
+mod instructions;
