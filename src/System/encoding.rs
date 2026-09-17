@@ -6,37 +6,39 @@ use crate::system::instructions::ITypes::{Op, OpImm, OpReg, OpRegImm, OpRegReg, 
 use crate::system::instructions::Opcode::{HALT, NONE};
 use crate::system::register::Registers::NOREG;
 
-pub fn decode_instruction(cpu: &CPU, addr: u64) -> Instruction {
-    // 1b op
-    // 8bit(1byte) reg 1
-    // 8bytes immediate
-    // = 10 bytes
-    let op = cpu.memory.read_byte(addr);
-    let i_type = get_instruction_type(op);
+impl CPU {
+    pub fn fetch_decode_instruction(&self, addr: u64) -> Instruction {
+        // 1b op
+        // 8bit(1byte) reg 1
+        // 8bytes immediate
+        // = 10 bytes
+        let op = self.memory.read_byte(addr);
+        let i_type = get_instruction_type(op);
 
-    match i_type {
-        ILLEGAL => {
-            Instruction::new(NONE as u8, NOREG as u8, NOREG as u8, 0, i_type )
-        }
-        Op => {
-            Instruction::new(op, NOREG as u8, NOREG as u8, 0, i_type)
-        }
-        OpReg => {
-            let data = cpu.memory.read_byte(addr + 1);
-            Instruction::new(op, data, NOREG as u8, 0, i_type)
-        }
-        OpImm => {
-            let data = cpu.memory.read_long(addr + 1);
-            Instruction::new(op, NOREG as u8, NOREG as u8, data, i_type)
-        }
-        OpRegReg => {
-            let data = cpu.memory.read_bytes(addr + 1, 3);
-            Instruction::new(op, data[0], data[1], 0, i_type)
-        }
-        OpRegImm => {
-            let data = cpu.memory.read_bytes(addr + 1, 10);
-            let imm = u64::from_le_bytes(data[2..10].try_into().unwrap());
-            Instruction::new(op, data[0], data[1], imm, i_type)
+        match i_type {
+            ILLEGAL => {
+                Instruction::new(NONE as u8, NOREG as u8, NOREG as u8, 0, i_type)
+            }
+            Op => {
+                Instruction::new(op, NOREG as u8, NOREG as u8, 0, i_type)
+            }
+            OpReg => {
+                let data = self.memory.read_byte(addr + 1);
+                Instruction::new(op, data, NOREG as u8, 0, i_type)
+            }
+            OpImm => {
+                let data = self.memory.read_long(addr + 1);
+                Instruction::new(op, NOREG as u8, NOREG as u8, data, i_type)
+            }
+            OpRegReg => {
+                let data = self.memory.read_bytes(addr + 1, 3);
+                Instruction::new(op, data[0], data[1], 0, i_type)
+            }
+            OpRegImm => {
+                let data = self.memory.read_bytes(addr + 1, 10);
+                let imm = u64::from_le_bytes(data[1..9].try_into().unwrap());
+                Instruction::new(op, data[0], NOREG as u8, imm, i_type)
+            }
         }
     }
 }
@@ -52,7 +54,7 @@ pub fn instruction_length_jtable(op: u8) -> u64{
     }
 }
 
-pub fn get_type_length_jtable(op_type: ITypes) -> u64{
+pub fn get_type_length_jtable(op_type: ITypes) -> u8{
     match op_type {
         ILLEGAL => {0}
         Op => {1}

@@ -1,6 +1,6 @@
 use crate::system::register::{Flags, Registers, REGISTERS};
 use crate::system::memory::Memory;
-
+use crate::system::register::Registers::PC;
 
 pub struct CPU {
     pub flags: Flags,
@@ -34,8 +34,13 @@ impl CPU {
     }
 
     #[inline(always)]
-    pub fn get_register(&mut self, register: Registers) -> u64 {
+    pub fn get_register(&self, register: Registers) -> u64 {
         self.registers[register as usize]
+    }
+    
+    #[inline(always)]
+    pub fn modify_register(&mut self, register: Registers) -> &mut u64 {
+        &mut self.registers[register as usize]
     }
 
     pub fn run(&mut self) {
@@ -48,15 +53,9 @@ impl CPU {
     fn step(&mut self) {
         //fetch
         //decode
+        let ins = self.fetch_decode_instruction(self.get_register(PC));
         //execute
-    }
-    
-    fn fetch(&self){
-        
-    }
-    
-    fn decode(){
-        
+
     }
 
     fn execute(&mut self) {

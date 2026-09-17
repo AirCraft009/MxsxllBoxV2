@@ -1,3 +1,4 @@
+use crate::system::encoding::get_type_length_jtable;
 use crate::system::register::Registers;
 
 #[repr(u8)]
@@ -56,17 +57,17 @@ pub enum ITypes{
 }
 
 pub struct Instruction {
-    i_type: ITypes,
-    opcode: u8,
-    rx: u8,
-    ry: u8,
-    immi: u64,
+    pub size: u8,
+    pub opcode: u8,
+    pub rx: u8,
+    pub ry: u8,
+    pub immi: u64,
 }
 
 impl Instruction {
     pub fn new(opcode: u8, rx: u8, ry: u8, immi: u64, i_type: ITypes) -> Self {
         Instruction{
-            i_type,
+            size:  get_type_length_jtable(i_type),
             opcode,
             rx,
             ry,

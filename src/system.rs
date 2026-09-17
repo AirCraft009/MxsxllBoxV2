@@ -5,3 +5,4 @@ mod register;
 mod encoding;
 pub mod memory;
 mod instructions;
+mod handlers;
