@@ -1,5 +1,12 @@
+use crate::system::memory::Memory;
+
 mod system;
 
 fn main() {
-    println!("Hello, world!");
+    let mut mem = Memory::default();
+    mem.load_rom(
+        &[
+
+        ]
+    )
 }

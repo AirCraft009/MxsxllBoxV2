@@ -1,6 +1,8 @@
 use crate::system::register::{Flags, Registers, REGISTERS};
 use crate::system::memory::Memory;
 use crate::system::register::Registers::PC;
+use crate::system::instructions::Instruction;
+use crate::system::instructions::Opcode::{HALT, NONE};
 
 pub struct CPU {
     pub flags: Flags,
@@ -10,7 +12,6 @@ pub struct CPU {
 }
 
 impl CPU {
-
     pub fn default() -> CPU {
         CPU {
             registers: [0u64; REGISTERS],
@@ -28,6 +29,7 @@ impl CPU {
             running: false,
         }
     }
+
     #[inline(always)]
     pub fn set_register(&mut self, register: Registers, value: u64) {
         self.registers[register as usize] = value;
@@ -37,7 +39,23 @@ impl CPU {
     pub fn get_register(&self, register: Registers) -> u64 {
         self.registers[register as usize]
     }
-    
+
+    #[inline(always)]
+    pub fn set_reg(&mut self, register: u8, value: u64) {
+        self.registers[register as usize] = value;
+    }
+
+    #[inline(always)]
+    pub fn get_reg(&self, register: u8) -> u64 {
+        self.registers[register as usize]
+    }
+
+    #[inline(always)]
+    pub fn modify_reg(&mut self, register: u8) -> &mut u64 {
+        &mut self.registers[register as usize]
+    }
+
+
     #[inline(always)]
     pub fn modify_register(&mut self, register: Registers) -> &mut u64 {
         &mut self.registers[register as usize]
@@ -51,14 +69,12 @@ impl CPU {
     }
 
     fn step(&mut self) {
-        //fetch
-        //decode
-        let ins = self.fetch_decode_instruction(self.get_register(PC));
-        //execute
-
+        let pc = self.get_register(PC);
+        let ins = self.fetch_decode_instruction(pc);
+        self.execute_handler(&ins);
     }
 
     fn execute(&mut self) {
-
+        // legacy hook; real dispatch lives in execute_handler (handlers.rs).
     }
 }

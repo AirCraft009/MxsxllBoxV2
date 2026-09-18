@@ -112,6 +112,13 @@ impl Memory {
             .build()
     }
 
+    //TODO: change loadROM to read from file
+    pub fn load_rom(&mut self, data: &[u8]){
+        let rom_r = self.boot_rom;
+        let rom = &mut self.data[rom_r.start as usize .. rom_r.end as usize];
+        rom.copy_from_slice(data);
+    }
+
     #[inline(always)]
     pub fn read_byte(&self, addr: u64) -> u8 {
         self.data[addr as usize]
@@ -161,8 +168,9 @@ impl Memory {
     }
 
     #[inline(always)]
-    pub fn write_bytes(&self, addr: u64, len: usize) -> &[u8] {
-        &self.data[addr as usize..addr as usize + len]
+    pub fn write_bytes(&mut self, addr: u64, w_data: &[u8]){
+        let slice = &mut self.data[addr as usize..addr as usize + w_data.len()];
+        slice.copy_from_slice(w_data)
     }
 }
 

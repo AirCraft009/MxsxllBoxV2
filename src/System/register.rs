@@ -1,5 +1,6 @@
-pub const REGISTERS: usize = 24;
+pub const REGISTERS: usize = 26;
 
+#[derive(Debug, Clone, Copy)]
 #[repr(u8)]
 pub enum Registers {
     PC,
@@ -30,17 +31,17 @@ pub enum Registers {
     NOREG,
 }
 
+impl PartialEq for Registers {
+    fn eq(&self, other: &Self) -> bool {
+        *self as u8 == *other as u8
+    }
+}
+
 #[derive(Debug, Clone, Copy, Default)]
-pub struct Flags{
-    //zero
+pub struct Flags {
     pub zf: bool,
-    //carry
     pub cf: bool,
-    //sign
     pub sf: bool,
-    //overflow
     pub of: bool,
-    //CONTROL FLAGS:
-    //interrupt
     pub irf: bool,
 }
