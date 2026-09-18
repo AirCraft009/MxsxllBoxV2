@@ -185,6 +185,7 @@ impl CPU {
 
     fn addi(&mut self, instruction: &Instruction) {
         let rx = instruction.rx;
+        println!("ADDING: {} to {}", instruction.immi, rx);
         let a = self.get_reg(rx);
         let b = instruction.immi;
         let result = a.wrapping_add(b);
